@@ -1,4 +1,4 @@
-coinbin
+Coinbin for SwiftCash
 =======
 
 An Open-Source Browser-Based Wallet for SwiftCash. Version 2.1
