@@ -11,7 +11,7 @@
 
 	/* public vars */
 	coinjs.pub = 0x3f;
-	coinjs.priv = 0xbf;
+	coinjs.priv = 0x98;
 	coinjs.multisig = 0x12;
 	coinjs.hdkey = {'prv':0x0488ade4, 'pub':0x0488b21e};
 	coinjs.bech32 = {'charset':'qpzry9x8gf2tvdw0s3jn54khce6mua7l', 'version':0, 'hrp':'bc'};
@@ -19,7 +19,7 @@
 	coinjs.compressed = false;
 
 	/* other vars */
-	coinjs.developer = 'SXucSXaV5HURNyJUWnPrVFHTdRzoU2u19F'; //swiftcash
+	coinjs.developer = 'SXucSXaV5HURNyJUWnPrVFHTdRzoVff6gU'; //swiftcash
 
 	/* bit(coinb.in) api vars */
 	coinjs.hostname	= 'coinbin.swiftcash.cc'
@@ -103,7 +103,7 @@
 	coinjs.pubkey2address = function(h, byte){
 		var r = ripemd160(Crypto.SHA256(Crypto.util.hexToBytes(h), {asBytes: true}));
 		r.unshift(byte || coinjs.pub);
-		var hash = Hash.KECCAK(r); //Crypto.SHA256(Crypto.SHA256(r, {asBytes: true}), {asBytes: true});
+		var hash = Crypto.SHA256(Crypto.SHA256(r, {asBytes: true}), {asBytes: true});
 		var checksum = hash.slice(0, 4);
 		return coinjs.base58encode(r.concat(checksum));
 	}
@@ -113,7 +113,7 @@
 		var x = Crypto.util.hexToBytes(h);
 		x.unshift(coinjs.pub);
 		var r = x;
-		r = Hash.KECCAK(r); //Crypto.SHA256(Crypto.SHA256(r,{asBytes: true}),{asBytes: true});
+		r = Crypto.SHA256(Crypto.SHA256(r,{asBytes: true}),{asBytes: true});
 		var checksum = r.slice(0,4);
 		return coinjs.base58encode(x.concat(checksum));
 	}
@@ -130,7 +130,7 @@
 		var x = ripemd160(Crypto.SHA256(s.buffer, {asBytes: true}), {asBytes: true});
 		x.unshift(coinjs.multisig);
 		var r = x;
-		r = Hash.KECCAK(r); //Crypto.SHA256(Crypto.SHA256(r, {asBytes: true}), {asBytes: true});
+		r = Crypto.SHA256(Crypto.SHA256(r, {asBytes: true}), {asBytes: true});
 		var checksum = r.slice(0,4);
 		var redeemScript = Crypto.util.bytesToHex(s.buffer);
 		var address = coinjs.base58encode(x.concat(checksum));
@@ -165,7 +165,7 @@
 		var x = ripemd160(Crypto.SHA256(s.buffer, {asBytes: true}), {asBytes: true});
 		x.unshift(coinjs.multisig);
 		var r = x;
-		r = Hash.KECCAK(r); //Crypto.SHA256(Crypto.SHA256(r, {asBytes: true}), {asBytes: true});
+		r = Crypto.SHA256(Crypto.SHA256(r, {asBytes: true}), {asBytes: true});
 		var checksum = r.slice(0,4);
 		var redeemScript = Crypto.util.bytesToHex(s.buffer);
 		var address = coinjs.base58encode(x.concat(checksum));
@@ -179,7 +179,7 @@
 		var x = ripemd160(Crypto.SHA256(keyhash, {asBytes: true}), {asBytes: true});
 		x.unshift(coinjs.multisig);
 		var r = x;
-		r = Hash.KECCAK(r); //Crypto.SHA256(Crypto.SHA256(r, {asBytes: true}), {asBytes: true});
+		r = Crypto.SHA256(Crypto.SHA256(r, {asBytes: true}), {asBytes: true});
 		var checksum = r.slice(0,4);
 		var address = coinjs.base58encode(x.concat(checksum));
 
@@ -213,7 +213,7 @@
 		}
 
 		r.unshift(coinjs.priv);
-		var hash = Hash.KECCAK(r); //Crypto.SHA256(Crypto.SHA256(r, {asBytes: true}), {asBytes: true});
+		var hash = Crypto.SHA256(Crypto.SHA256(r, {asBytes: true}), {asBytes: true});
 		var checksum = hash.slice(0, 4);
 
 		return coinjs.base58encode(r.concat(checksum));
@@ -254,7 +254,7 @@
 			var bytes = coinjs.base58decode(addr);
 			var front = bytes.slice(0, bytes.length-4);
 			var back = bytes.slice(bytes.length-4);
-			var checksum = Hash.KECCAK(front).slice(0, 4); //Crypto.SHA256(Crypto.SHA256(front, {asBytes: true}), {asBytes: true}).slice(0, 4);
+			var checksum = Crypto.SHA256(Crypto.SHA256(front, {asBytes: true}), {asBytes: true}).slice(0, 4);
 			if (checksum+"" == back+"") {
 
 				var o = {};
@@ -590,7 +590,7 @@
 				var decoded = coinjs.base58decode(data);
 				if(decoded.length == 82){
 					var checksum = decoded.slice(78, 82);
-					var hash = Hash.KECCAK(decoded.slice(0, 78)); //Crypto.SHA256(Crypto.SHA256(decoded.slice(0, 78), { asBytes: true } ), { asBytes: true } );
+					var hash = Crypto.SHA256(Crypto.SHA256(decoded.slice(0, 78), { asBytes: true } ), { asBytes: true } );
 					if(checksum[0]==hash[0] && checksum[1]==hash[1] && checksum[2]==hash[2] && checksum[3]==hash[3]){
 						bytes = decoded.slice(0, 78);
 					}
@@ -1228,7 +1228,7 @@
 					bufferTmp = bufferTmp.concat(coinjs.numToBytes(this.ins[i].outpoint.index, 4));
 				}
 			}
-			var hashPrevouts = bufferTmp.length >= 1 ? Hash.KECCAK(bufferTmp) /*Crypto.SHA256(Crypto.SHA256(bufferTmp, {asBytes: true}), {asBytes: true})*/ : zero; 
+			var hashPrevouts = bufferTmp.length >= 1 ? Crypto.SHA256(Crypto.SHA256(bufferTmp, {asBytes: true}), {asBytes: true}) : zero;
 
 			var bufferTmp = [];
 			if(!(sigHashType >= 80) && sigHashType != 2 && sigHashType != 3){ // not sighash anyonecanpay & single & none
@@ -1236,7 +1236,7 @@
 					bufferTmp = bufferTmp.concat(coinjs.numToBytes(this.ins[i].sequence, 4));
 				}
 			}
-			var hashSequence = bufferTmp.length >= 1 ? Hash.KECCAK(bufferTmp) /*Crypto.SHA256(Crypto.SHA256(bufferTmp, {asBytes: true}), {asBytes: true})*/ : zero; 
+			var hashSequence = bufferTmp.length >= 1 ? Crypto.SHA256(Crypto.SHA256(bufferTmp, {asBytes: true}), {asBytes: true}) : zero; 
 
 			var outpoint = Crypto.util.hexToBytes(this.ins[index].outpoint.hash).reverse();
 			outpoint = outpoint.concat(coinjs.numToBytes(this.ins[index].outpoint.index, 4));
@@ -1250,13 +1250,13 @@
 					bufferTmp = bufferTmp.concat(coinjs.numToVarInt(this.outs[i].script.buffer.length));
 					bufferTmp = bufferTmp.concat(this.outs[i].script.buffer);
 				}
-				hashOutputs = Hash.KECCAK(bufferTmp); //Crypto.SHA256(Crypto.SHA256(bufferTmp, {asBytes: true}), {asBytes: true});
+				hashOutputs = Crypto.SHA256(Crypto.SHA256(bufferTmp, {asBytes: true}), {asBytes: true});
 
 			} else if ((sigHashType == 2) && index < this.outs.length){ // is sighash single
 				bufferTmp = bufferTmp.concat(coinjs.numToBytes(this.outs[index].value, 8));
 				bufferTmp = bufferTmp.concat(coinjs.numToVarInt(this.outs[i].script.buffer.length));
 				bufferTmp = bufferTmp.concat(this.outs[index].script.buffer);
-				hashOutputs = Hash.KECCAK(bufferTmp); //Crypto.SHA256(Crypto.SHA256(bufferTmp, {asBytes: true}), {asBytes: true});
+				hashOutputs = Crypto.SHA256(Crypto.SHA256(bufferTmp, {asBytes: true}), {asBytes: true});
 			}
 
 			var locktime = coinjs.numToBytes(this.lock_time, 4);
@@ -1924,12 +1924,26 @@
 		}
 	}
 
-	coinjs.numToByteArray = function(num) {
-		if (num <= 256) { 
+	coinjs.numToByteArray = function(int) {
+                var byteArray = [0];
+                if (int > 8388607) byteArray = [0, 0, 0, 0];
+                else if (int > 32767) byteArray = [0, 0, 0];
+                else if (int > 127) byteArray = [0, 0];
+
+                for ( var index = 0; index < byteArray.length; index++ ) {
+                        var byte = int & 0xff;
+                        byteArray [ index ] = byte;
+                        int = (int - byte) / 256 ;
+                }
+
+                return byteArray;
+
+                // This is not consistent with how CScriptNum initialization works in the core wallet!
+		/*if (num <= 256) {
 			return [num];
 		} else {
 			return [num % 256].concat(coinjs.numToByteArray(Math.floor(num / 256)));
-		}
+		}*/
 	}
 
 	coinjs.numToVarInt = function(num) {
