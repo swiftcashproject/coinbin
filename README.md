@@ -1,7 +1,7 @@
 Coinbin for SwiftCash
 =======
 
-An Open-Source Browser-Based Wallet for SwiftCash. Version 2.1
+An Open-Source Browser-Based Wallet for SwiftCash. Version 3.0
 
 Live version available at https://coinbin.swiftcash.cc
 
